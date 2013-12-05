@@ -65,6 +65,10 @@ module MultiTenancy
       self.tenant_class.find_by_domain!(domain)
     end
 
+    def self.find_by_subdomain(subdomain)
+      self.tenant_class.find_by_subdomain(subdomain)
+    end
+
     def self.find_by_subdomain!(subdomain)
       self.tenant_class.find_by_subdomain!(subdomain)
     end
