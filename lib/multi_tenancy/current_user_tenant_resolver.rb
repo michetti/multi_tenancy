@@ -19,7 +19,13 @@ module MultiTenancy
       end
 
       def find_by_current_user
-        Tenant.find_by_id(current_user.tenant_id) if current_user.present?
+        tenant_id = current_user.send(Rails.application.config.tenant_column.to_sym)
+
+        if tenant_id.present? && Rails.application.config.tenant_class.send(:exists?, tenant_id)
+          return Rails.application.config.tenant_class.send(:find, tenant_id)
+        end
+
+        return nil
       end
     end
   end

@@ -7,14 +7,16 @@ module MultiTenancy
 
     module ClassMethods
       def acts_as_tenant(options = {})
-        has_many :users, dependent: :destroy
+        if options[:users_foreign_key].blank?
+          has_many :users, dependent: :destroy
+        else
+          has_many :users, dependent: :destroy, foreign_key: options[:users_foreign_key]
+        end
+        
         accepts_nested_attributes_for :users
 
-        validates :name, :subdomain,
-                  presence: true, uniqueness: true
-
-        validates :domain,
-                  uniqueness: true
+        validates :name, :subdomain, presence: true, uniqueness: true if options[:use_subdomain]
+        validates :domain, uniqueness: true if options[:use_domain]
 
         validates_associated :users
         validates_presence_of :users, on: :save

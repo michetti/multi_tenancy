@@ -9,7 +9,11 @@ module MultiTenancy
       def scope_to_tenant(options = {})
         default_scope do
           if MultiTenancy::Tenant.current_id.present?
-            where(Rails.application.config.tenant_column => MultiTenancy::Tenant.current_id)
+            # tenant column name to use
+            tenant_column = options[:tenant_column] || Rails.application.config.tenant_column
+
+            # scope to tenant
+            where(tenant_column => MultiTenancy::Tenant.current_id)
           end
         end
       end

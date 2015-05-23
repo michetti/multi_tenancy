@@ -3,6 +3,9 @@ module MultiTenancy
     extend ActiveSupport::Concern
 
     included do
+      def current_user_tenant_id
+        current_user.try(Rails.application.config.tenant_column.to_sym)
+      end
     end
 
     module ClassMethods
@@ -20,7 +23,7 @@ module MultiTenancy
 
         # if a user is signed in, check if he has access to this tenant
         if current_user.present?
-          if current_user_tenant_id != tenant.id
+          if current_user_tenant_id != MultiTenancy::Tenant.current_id
             render file: "public/401", status: :unauthorized
             return
           end
@@ -29,10 +32,6 @@ module MultiTenancy
         yield
       ensure
         MultiTenancy::Tenant.current_id = nil
-      end
-
-      def current_user_tenant_id
-        Tenant.current_user_tenant_id
       end
     end
   end
