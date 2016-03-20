@@ -12,7 +12,7 @@ module MultiTenancy
         else
           has_many :users, dependent: :destroy, foreign_key: options[:users_foreign_key]
         end
-        
+
         accepts_nested_attributes_for :users
 
         validates :name, :subdomain, presence: true, uniqueness: true if options[:use_subdomain]
@@ -77,8 +77,8 @@ module MultiTenancy
 
     def self.current_user_tenant_id
       current_user.present? ? current_user.send(self.tenant_column) : nil
-    end    
+    end
   end
 end
- 
+
 ActiveRecord::Base.send :include, MultiTenancy::Tenant
