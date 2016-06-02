@@ -4,7 +4,8 @@ module MultiTenancy
 
     included do
       def current_user_tenant_id
-        current_user.try(Rails.application.config.tenant_column.to_sym)
+        tenant_id = current_user.try(Rails.application.config.tenant_column.to_sym)
+        return tenant_id.present? ? tenant_id : nil
       end
     end
 
